@@ -1,0 +1,37 @@
+name: Deploy Docusaurus
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          yarn install
+
+      - name: Build site
+        run: |
+          yarn build
+
+      - name: Deploy to Raspberry Pi
+        env:
+          PI_HOST: ${{ secrets.PI_HOST }}
+          PI_USER: ${{ secrets.PI_USER }}
+          PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
+          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
+        run: |
+          # Copy the Docusaurus build folder to the Raspberry Pi on a custom port
+          rsync -avz -e "ssh -p $PI_SSH_PORT" --delete ./build/ $PI_USER@$PI_HOST:/home/vincent/colonypm/docs
