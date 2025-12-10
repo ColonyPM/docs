@@ -33,6 +33,7 @@ jobs:
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"  # Example: v202512100930
           git tag $TAG_NAME
           git push origin $TAG_NAME
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Set the tag name as an environment variable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -40,6 +41,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: ./build/*
-          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}
+          tag_name: ${{ env.TAG_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
