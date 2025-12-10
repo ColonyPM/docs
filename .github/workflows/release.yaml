@@ -33,7 +33,7 @@ jobs:
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"  # Example: v202512100930
           git tag $TAG_NAME
           git push origin $TAG_NAME
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV  # Set the tag name as an environment variable
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
