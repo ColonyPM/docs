@@ -37,6 +37,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Print build directory
+        run: |
+          ls -R ./build
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
