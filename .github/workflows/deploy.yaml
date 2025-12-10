@@ -1,14 +1,13 @@
-name: Deploy Docusaurus
+name: Create Release
 
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -19,24 +18,14 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: |
-          yarn install
+        run: npm install
 
-      - name: Build site
-        run: |
-          yarn build
+      - name: Build Docusaurus site
+        run: npm run build
 
-      - name: Deploy to Raspberry Pi
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./build/*
         env:
-          PI_HOST: ${{ secrets.PI_HOST }}
-          PI_USER: ${{ secrets.PI_USER }}
-          PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
-          PI_SSH_PORT: ${{ secrets.PI_SSH_PORT }}
-        run: |
-          mkdir -p ~/.ssh
-
-          # Add Raspberry Pi's SSH key to known_hosts
-          ssh-keyscan -p $PI_SSH_PORT $PI_HOST >> ~/.ssh/known_hosts
-
-          # Copy the Docusaurus build folder to the Raspberry Pi on a custom port
-          rsync -avz -e "ssh -p $PI_SSH_PORT" --delete ./build/ $PI_USER@$PI_HOST:/home/vincent/colonypm/docs
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
