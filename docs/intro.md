@@ -3,9 +3,7 @@ slug: /
 sidebar_position: 1
 ---
 
-# ColonyPM
-
-## Getting Started
+# Getting Started
 
 Get started by **creating a new site**.
 
