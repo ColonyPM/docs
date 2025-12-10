@@ -28,6 +28,7 @@ jobs:
         run: |
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"  # Example: v202512100930
           git tag $TAG_NAME
+          git remote set-url origin https://$GITHUB_ACTOR:${{ secrets.GH_TOK }}@github.com/ColonyPM/docs.git
           git push origin $TAG_NAME
 
       - name: Create GitHub Release
