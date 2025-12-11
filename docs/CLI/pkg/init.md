@@ -18,7 +18,7 @@ cpm pkg init [path]
 
 1. Creates the package directory (if a path is provided)
 2. Creates a `templates/` subdirectory
-3. Generates a `package.yaml` [manifest](https://docs.colonypm.xyz/Package/manifest) with default values
+3. Generates a `package.yaml` [manifest](docs/docs/Package/manifest.md) with default values
 4. Creates a `values.yaml` file with a `global:` section
 5. Creates a `README.md` 
 
@@ -49,5 +49,5 @@ cpm pkg init /path/to/package
 
 ## See Also
 
-- [Package Format](https://docs.colonypm.xyz/Package/format) — Full package structure and file reference
-- [Package Manifest](https://docs.colonypm.xyz/Package/manifest) — Detailed information about the package manifest file
+- [Package Format](docs/docs/Package/format.md) — Full package structure and file reference
+- [Package Manifest](docs/docs/Package/manifest.mdx) — Detailed information about the package manifest file
