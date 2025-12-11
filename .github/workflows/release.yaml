@@ -1,50 +1,50 @@
-name: Create Release
-
+name: Create Release and Deploy via Cloudflare Tunnel
 on:
   push:
     branches:
       - master
-
 permissions:
   contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install dependencies using npm ci
+        run: npm ci
 
       - name: Build Docusaurus site
         run: npm run build
 
-      - name: Create Git tag
-        id: create_tag
-        run: |
-          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-          git tag $TAG_NAME
-          git push origin $TAG_NAME
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create tar.gz archive of build directory
-        run: |
-          tar -czf build.tar.gz -C ./build .
+        run: tar -czf build.tar.gz -C ./build .
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
         with:
-          files: ./build.tar.gz
-          tag_name: ${{ env.TAG_NAME }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          files: build.tar.gz
+          body: |
+            Automated build from commit ${{ github.sha }}
+
+      - name: Trigger deployment webhook
+        run: |
+          curl -X POST \
+            -H "X-Deploy-Token: ${{ secrets.DEPLOY_WEBHOOK_TOKEN }}" \
+            ${{ secrets.DEPLOY_WEBHOOK_URL }}
