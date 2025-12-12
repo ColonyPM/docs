@@ -5,22 +5,16 @@ Initialize a new package with the standard directory structure and required file
 ## Usage
 
 ```bash
-cpm pkg init [path]
+cpm pkg init [DEST]
 ```
 
 ## Arguments
 
 | Argument | Description | Required |
 |----------|-------------|----------|
-| `[path]` | Directory to initialize the package in | No (defaults to current directory) |
+| `[DEST]` | Directory to initialize the package in | No |
 
-## What It Does
-
-1. Creates the package directory (if a path is provided)
-2. Creates a `templates/` subdirectory
-3. Generates a `package.yaml` [manifest](../../Package/manifest.md) with default values
-4. Creates a `values.yaml` file with a `global:` section
-5. Creates a `README.md` 
+When `[DEST]` is not provided, the package will be initialized in the current directory. The package name will be derived from the directory name.
 
 ## Generated Structure
 
