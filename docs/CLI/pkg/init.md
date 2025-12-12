@@ -1,4 +1,4 @@
-# Init Command
+# init
 
 Initialize a new package with the standard directory structure and required files.
 
@@ -18,7 +18,7 @@ cpm pkg init [path]
 
 1. Creates the package directory (if a path is provided)
 2. Creates a `templates/` subdirectory
-3. Generates a `package.yaml` [manifest](docs/docs/Package/manifest.md) with default values
+3. Generates a `package.yaml` [manifest](../../Package/manifest.md) with default values
 4. Creates a `values.yaml` file with a `global:` section
 5. Creates a `README.md` 
 
@@ -49,5 +49,5 @@ cpm pkg init /path/to/package
 
 ## See Also
 
-- [Package Format](docs/docs/Package/format.md) — Full package structure and file reference
-- [Package Manifest](docs/docs/Package/manifest.mdx) — Detailed information about the package manifest file
+- [Package Format](../../Package/format.md) — Full package structure and file reference
+- [Package Manifest](../../Package/manifest.md) — Detailed information about the package manifest file
