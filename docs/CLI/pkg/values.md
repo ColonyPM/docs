@@ -17,7 +17,7 @@ cpm pkg values <PKG> [DEST]
 
 When `[DEST]` is not specified, the file is copied to the current working directory. The copied file will be named `values.<PKG>.yaml`.
 
-## Example
+## Examples
 
 Copy the values.yaml file from the `faas` package to the current directory:
 
