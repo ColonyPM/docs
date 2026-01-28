@@ -10,30 +10,41 @@ cpm pkg values <PKG> [DEST]
 
 ## Arguments
 
-| Argument | Description | Required |
-|----------|-------------|----------|
-| `<PKG>` | Name of the package whose values.yaml to copy | Yes |
-| `[DEST]` | Destination directory for the copied file | No |
+| Argument | Description                                   | Required |
+| -------- | --------------------------------------------- | -------- |
+| `<PKG>`  | Name of the package whose values.yaml to copy | Yes      |
+| `[DEST]` | Destination **path** (directory or filename)  | No       |
 
-When `[DEST]` is not specified, the file is copied to the current working directory. The copied file will be named `values.<PKG>.yaml`.
+- If `[DEST]` is a **directory** (or omitted), the file is saved as `values.<PKG>.yaml`.
+- If `[DEST]` is a **file path**, the file is saved with that specific name.
+
+> **Note:** This command will **not** overwrite existing files.
 
 ## Examples
 
+**Default Usage:**
 Copy the values.yaml file from the `faas` package to the current directory:
 
 ```bash
-cpm pkg values faas
+cpm pkg values fibbers
+# Creates: ./values.fibbers.yaml
 ```
 
-This creates `values.faas.yaml` in your current directory.
-
-Copy the values.yaml file to a specific directory:
+**Copy to a Directory:**
+Copy the file into a specific folder:
 
 ```bash
-cpm pkg values faas ./config
+cpm pkg values fibbers ./config
+# Creates: ./config/values.fibbers.yaml
 ```
 
-This creates `values.faas.yaml` in the `./config` directory.
+**Rename the File:**
+Copy the file with a custom name:
+
+```bash
+cpm pkg values fibbers ./my-custom-config.yaml
+# Creates: ./my-custom-config.yaml
+```
 
 ## See Also
 
