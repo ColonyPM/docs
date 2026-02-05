@@ -1,50 +1,67 @@
-name: Create Release and Deploy via Cloudflare Tunnel
+name: Build and Deploy
+
 on:
-  push:
-    branches:
-      - master
-permissions:
-  contents: write
+    push:
+        branches:
+            - master
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    build-and-deploy:
+        name: Build & Deploy
+        runs-on: ubuntu-latest
+        steps:
+            # --- SETUP ---
+            - name: Checkout code
+              uses: actions/checkout@v6
 
-      - name: Cache Node.js dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: "npm"
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Install dependencies using npm ci
-        run: npm ci
+            # --- BUILD ---
+            - name: Build project
+              run: npm run build
 
-      - name: Build Docusaurus site
-        run: npm run build
+            # --- PREPARE TUNNEL ---
+            - name: Install cloudflared
+              run: |
+                  curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+                  sudo dpkg -i cloudflared.deb
 
-      - name: Create tar.gz archive of build directory
-        run: tar -czf build.tar.gz -C ./build .
+            - name: Setup SSH Key
+              run: |
+                  mkdir -p ~/.ssh
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+                  chmod 600 ~/.ssh/id_ed25519
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: build-${{ github.run_number }}
-          name: Build ${{ github.run_number }}
-          files: build.tar.gz
-          body: |
-            Automated build from commit ${{ github.sha }}
+            - name: Configure SSH Proxy
+              run: |
+                  echo "Host vm_via_tunnel" >> ~/.ssh/config
+                  echo "  HostName ${{ secrets.VM_HOSTNAME }}" >> ~/.ssh/config
+                  echo "  User ${{ secrets.USERNAME }}" >> ~/.ssh/config
+                  echo "  IdentityFile ~/.ssh/id_ed25519" >> ~/.ssh/config
+                  echo "  ProxyCommand /usr/bin/cloudflared access ssh --hostname %h --id ${{ secrets.CF_ACCESS_CLIENT_ID }} --secret ${{ secrets.CF_ACCESS_CLIENT_SECRET }}" >> ~/.ssh/config
+                  echo "  StrictHostKeyChecking no" >> ~/.ssh/config
 
-      - name: Trigger deployment webhook
-        run: |
-          curl -X POST \
-            -H "X-Deploy-Token: ${{ secrets.DEPLOY_WEBHOOK_TOKEN }}" \
-            ${{ secrets.DEPLOY_WEBHOOK_URL }}
+            # --- DEPLOY ---
+            - name: Rsync Files to VM
+              run: |
+                  # Deploys to the "docusaurus-deploy" folder inside your user's home directory.
+                  # The --delete flag ensures old files are removed from the target.
+
+                  rsync -avz --delete \
+                    -e "ssh" \
+                    ./build/ \
+                    vm_via_tunnel:~/cpm/docs/build/
+
+            - name: Discord notification
+              uses: Ilshidur/action-discord@master
+              env:
+                  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+              with:
+                  args: "A new version of the docs has been built and deployed."
