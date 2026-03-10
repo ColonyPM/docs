@@ -7,7 +7,7 @@ The documentation covers how to use the ColonyPM CLI, including its available co
 You can read the documentation in two ways:
 
 1. **Read the raw Markdown files** directly in the [`/docs`](./docs) directory.
-2. **Build and run the website locally** to browse the documentation through the Docusaurus interface.
+2. **Build and run the website locally** to browse the documentation via the website.
 
 ## Running the documentation website
 
