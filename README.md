@@ -1,41 +1,32 @@
-# Website
+# ColonyPM Documentation
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This repository contains the source code for the ColonyPM documentation website, built with [Docusaurus](https://docusaurus.io/).
 
-## Installation
+The documentation covers how to use the ColonyPM CLI, including its available commands. It also describes the package format as well as the manifest format.
 
-```bash
-yarn
-```
+You can read the documentation in two ways:
 
-## Local Development
+1. **Read the raw Markdown files** directly in the [`/docs`](./docs) directory.
+2. **Build and run the website locally** to browse the documentation through the Docusaurus interface.
 
-```bash
-yarn start
-```
+## Running the documentation website
 
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+To view the documentation as a website, you can either build it or start a local development server.
 
-## Build
+### Start a development server
 
-```bash
-yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-## Deployment
-
-Using SSH:
+This is useful while writing or editing documentation:
 
 ```bash
-USE_SSH=true yarn deploy
+npm install
+npm run start
 ```
+This will start a local development server and open the site in your browser.
 
-Not using SSH:
-
+## Building the documentation website
+To generate a production build of the documentation site:
 ```bash
-GIT_USER=<Your GitHub username> yarn deploy
+npm install
+npm run build
 ```
-
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+The static site will be generated in the build directory.
